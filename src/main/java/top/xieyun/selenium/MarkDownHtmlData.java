@@ -8,14 +8,18 @@ import com.alibaba.excel.annotation.ExcelProperty;
 
 public class MarkDownHtmlData {
 	// 用于标识卡片的ID属性
-	@ExcelProperty("sortedFiled")
+	@ExcelProperty
 	private String sortedFiled = "";
 	// 问题字段，将问题单独提取出来放在一个字段
-	@ExcelProperty("问题")
+	@ExcelProperty
 	private String problem = "";
 	// 填空题卡片
-	@ExcelProperty("答案")
+	@ExcelProperty
 	private String answer = "";
+	// 标签
+	@ExcelProperty
+	private String label = "";
+	
 
 	public MarkDownHtmlData() {
 		super();
@@ -50,6 +54,15 @@ public class MarkDownHtmlData {
 
 	public void setAnswer(String answer) {
 		this.answer = answer;
+	}
+	
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	@Override

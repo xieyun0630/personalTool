@@ -1,6 +1,8 @@
 package top.xieyun.mdToAnkiConverter;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,22 +22,19 @@ import java.util.stream.Collectors;
 public class MDMarker {
 	/**
 	 * 为每一个标题添加一个唯一的标识，主要为文件名加时间戳。 Anki中不需要顺序问题，只需要一个唯一标识用以保存学习记录以及更新卡片笔记。
-	 * 默认将生成的新文件夹以fileName_marked.md命名。 直接放在markDownFilePath相同路径下
 	 * 
 	 * @param markDownFilePath 要添加标题标识的markdown文档的路径
 	 * @return 返回添加了ID标识的Markdown笔记
 	 */
 	public String markedID(String markDownFilePath) {
-		// 获取目标文件名
-		String targetFilePath = markDownFilePath.substring(0, markDownFilePath.length() - 3) + "_marked.md";
-		return markedID(markDownFilePath, targetFilePath);
+		return markedID(markDownFilePath, markDownFilePath);
 	}
 
 	/**
 	 * 为每一个标题添加一个唯一的标识，主要为文件名加时间戳。 Anki中不需要顺序问题，只需要一个唯一标识用以保存学习记录以及更新卡片笔记。
 	 * 
-	 * @param markDownFilePath 要添加标题标识的markdown文档的路径
-	 * @param targetDirePath   添加后的markdown文档存放路径
+	 * @param markDownFilePath 要添加标题标识的markdown文档的路径以及文件名
+	 * @param targetDirePath   添加后的markdown文档存放路径以及文件名
 	 */
 	public String markedID(String markDownFilePath, String targetDirePath) {
 		// 获取不带后缀的文件名
@@ -107,7 +106,31 @@ public class MDMarker {
 		// 没有新笔记返回null。
 		return null;
 	}
+	
+    public void patchMarkedID(File direction) throws FileNotFoundException {
+        if (!direction.exists())
+            throw new IllegalArgumentException("目录：" + direction + "不存在.");
+        if (!direction.isDirectory()) {
+            throw new IllegalArgumentException(direction + "不是目录。");
+        }
 
+        //如果要遍历子目录下的内容就需要构造File对象做递归操作，File提供了直接返回File对象的API
+        File[] files = direction.listFiles();
+        if (files != null && files.length > 0) {
+            for (File file : files) {
+                if (file.isDirectory())
+                    //递归
+                    patchMarkedID(file);
+                else {
+                    if (file.getName().endsWith(".md")) {
+                        markedID(file.getAbsolutePath());
+                    }
+                }
+            }
+        }
+    }
+    
+    
 	/**
 	 * 输入一行markdown文本判断是否是标题行。
 	 *
