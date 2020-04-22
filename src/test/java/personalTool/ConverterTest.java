@@ -40,7 +40,7 @@ public class ConverterTest {
 	@Test
 	public void testAnkiTool() {
 		File sourcePath = new File("C:\\note\\CSNote");
-		File targetPath = new File("D:\\temp");
+		File targetPath = new File("C:\\Users\\xieyun\\AppData\\Roaming\\Anki2\\用户1\\collection.media");
 		try {
 			AnkiTool.moveImagesToTargetPath(sourcePath, targetPath);
 		} catch (IOException e) {
