@@ -1,20 +1,18 @@
 package top.xieyun.UfExcelVBA;
 
 import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.enums.CellExtraTypeEnum;
 
 /**
  * UxTool
  */
 public class UxTool {
-    String sourceExcel = "C:\\ankiOutput\\testSheet.xlsx";
+    String sourceExcel = "D:\\UF_SVN\\300_プロジェクト管理\\202004_UF改修\\作業一覧.xlsx";
     public void readExcel(){
         EasyExcel.read(sourceExcel, ExcelObj.class, new ExcelObjListener())
-        .extraRead(CellExtraTypeEnum.MERGE)
-        .sheet("Sheet1").doRead();
+        .sheet("作業一覧").doRead();
     }
     public static void main(String[] args) {
         new UxTool().readExcel();
-        System.out.println("ok!!!!!!!");
+        System.out.println("abc");
     }
 }

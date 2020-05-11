@@ -3,6 +3,7 @@ package top.xieyun.velocity;
 import com.alibaba.excel.annotation.ExcelProperty;
 
 import lombok.Data;
+@Data
 public class ExcelPojo {
 	@ExcelProperty(value = "WS_FORM", index = 0)
 	private String WS_FORM;

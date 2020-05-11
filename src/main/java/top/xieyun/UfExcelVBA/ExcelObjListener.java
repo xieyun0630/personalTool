@@ -25,106 +25,151 @@ public class ExcelObjListener extends AnalysisEventListener<ExcelObj> {
 
     @Override
     public void invoke(final ExcelObj data, final AnalysisContext context) {
-        final OutputObj outputObj = new OutputObj();
-        String classFileName = "";
-        if(data.getCell9().equals("○")){
-                    outputObj.setCell1(data.getCell2() + "-" + data.getCell7());
-
-        Pattern pattern = Pattern.compile("\\w+\\.java");
-        Matcher matcher = pattern.matcher(data.getCell1());
-        if (matcher.find()) {
-            classFileName = matcher.group();
-        }
-        
-        if(data.getCell8().matches("\\d+")){
-            SearchFileObj searchFileObj = new SearchFileObj();
-            searchFileObj.setFileName(classFileName);
-            searchFileObj.setFileNo(Integer.parseInt(data.getCell8()));
-            try {
-                if (data.getCell11().equals("UFA")) {
-                    searchFile(new File("E:\\search\\UFA-WebApp"), searchFileObj);
-                }
-    
-                if (data.getCell11().equals("UFC")) {
-                    searchFile(new File("E:\\search\\UFC-WebApp"), searchFileObj);
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            String messageId = "";
-            if (searchFileObj.getResultLine() != null) {
-                
-                Pattern p2 = Pattern.compile("UF[A-Z]{2}[AT\\d]{2}\\d{3}[A-Z]");
-                Matcher matcher2 = p2.matcher(searchFileObj.getResultLine());
-                if(matcher2.find()){
-                    messageId = matcher2.group();
-                }
-                outputObj.setCell2(messageId);
-            }
-
-            try {
-                String resultMessage = null;
-                if(messageId.matches("\\w{10}")){
-                    if (data.getCell11().equals("UFA")) {
-                        resultMessage = findMessage(new File(
-                                "D:\\All-In-One-IDE4.7_UF\\workspace\\UFA-WebApp\\WebEnv\\src\\00.default\\etc\\msg\\UxAdmMessage.csv"),
-                                messageId);
-                    }
-        
-                    if (data.getCell11().equals("UFC")) {
-                        resultMessage = findMessage(new File(
-                                "D:\\All-In-One-IDE4.7_UF\\workspace\\UFC-WebApp\\WebEnv\\src\\00.default\\etc\\msg\\UxAdmMessage.csv"),
-                                messageId);
-                    }
-                }
-                outputObj.setCell3(resultMessage);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        String lineNo = data.getCell8();
-        outputObj.setCell4(lineNo);
-
-        String cellE = data.getCell5();
-        String cellF = data.getCell6();
-        if (cellE.equals("ー") && cellF.matches("\\d+")) {
-            outputObj.setCell5("②");
-        }
-        if (cellF.equals("ー") && cellE.matches("\\d+")) {
-            outputObj.setCell5("①");
-        }
-
-        outputObj.setCell6(data.getCell3());
-        outputObj.setCell7(data.getCell4());
-
-        outputObj.setCell8(classFileName);
-
-        outputList.add(outputObj);
-
-
-        }
-
+        String result = matchString(data.getCell1(), "\\w+.java");
+        data.setCell1(result);
+        list.add(data);
     }
 
     @Override
     public void doAfterAllAnalysed(final AnalysisContext context) {
+        List<ExcelObj> filteredList = list.stream().filter(o -> o.getCell9().contains("○"))
+                .collect(Collectors.toList());
+
+        String currentCell1 = filteredList.get(0).getCell1();
+        ;
+        for (ExcelObj o : list) {
+            if (o.getCell1().isEmpty()) {
+                o.setCell1(currentCell1);
+            } else {
+                currentCell1 = o.getCell1();
+            }
+        }
+
+        String currentCell2 = filteredList.get(0).getCell2();
+        ;
+        for (ExcelObj o : list) {
+            if (o.getCell2().isEmpty()) {
+                o.setCell2(currentCell2);
+            } else {
+                currentCell2 = o.getCell2();
+            }
+        }
+
+        String currentCell3 = filteredList.get(0).getCell3();
+        ;
+        for (ExcelObj o : list) {
+            if (o.getCell3().isEmpty()) {
+                o.setCell3(currentCell3);
+            } else {
+                currentCell3 = o.getCell3();
+            }
+        }
+
+        String currentCell4 = filteredList.get(0).getCell4();
+        ;
+        for (ExcelObj o : list) {
+            if (o.getCell4().isEmpty()) {
+                o.setCell4(currentCell4);
+            } else {
+                currentCell4 = o.getCell4();
+            }
+        }
+
+        String currentCell5 = filteredList.get(0).getCell5();
+        ;
+        for (ExcelObj o : list) {
+            if (o.getCell5().isEmpty()) {
+                o.setCell5(currentCell5);
+            } else {
+                currentCell5 = o.getCell5();
+            }
+        }
+
+        String currentCell6 = filteredList.get(0).getCell6();
+        ;
+        for (ExcelObj o : list) {
+            if (o.getCell6().isEmpty()) {
+                o.setCell6(currentCell6);
+            } else {
+                currentCell6 = o.getCell6();
+            }
+        }
+
+        for (ExcelObj excelObj : filteredList) {
+
+            String sheetName = excelObj.getCell2() + "-" + excelObj.getCell7();
+            excelObj.setSheetName(sheetName);
+
+            String sheetType = "";
+            if (excelObj.getCell5().matches("\\d{0,2}")) {
+                sheetType = "①";
+            } else if (excelObj.getCell6().matches("\\d{0,2}")) {
+                sheetType = "②";
+            }
+            excelObj.setSheetType(sheetType);
+
+            String messageId = "";
+            SearchFileObj searchFileObj = new SearchFileObj();
+            searchFileObj.setFileName(excelObj.getCell1());
+            searchFileObj.setFileNo(Integer.parseInt(excelObj.getCell8()));
+            try {
+                if (excelObj.getCell10().equals("UFA")) {
+                    searchFile(new File("D:\\UF_SVN\\060_プログラミング\\202004_UF改修\\UFA-WebApp"), searchFileObj);
+                } else if (excelObj.getCell10().equals("UFC")) {
+                    searchFile(new File("D:\\UF_SVN\\060_プログラミング\\202004_UF改修\\UFC-WebApp"), searchFileObj);
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            messageId = matchString(searchFileObj.getResultLine(), "U[FI][A-Z]{2}[AT\\d]{2}\\d{3}[A-Z]");
+            excelObj.setMessageId(messageId);
+
+            String message = "";
+            try {
+                if (excelObj.getCell10().equals("UFA")) {
+                    message = findMessage(new File(
+                            "D:\\All-In-One-IDE4.7_UF\\workspace\\UFA-WebApp\\WebEnv\\src\\00.default\\etc\\msg\\UxAdmMessage.csv"),
+                            messageId);
+                } else if (excelObj.getCell10().equals("UFC")) {
+                    message = findMessage(new File(
+                            "D:\\All-In-One-IDE4.7_UF\\workspace\\UFC-WebApp\\WebEnv\\src\\00.default\\etc\\msg\\UxAdmMessage.csv"),
+                            messageId);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            excelObj.setMessage(message);
+            if(message.length()>10){
+                excelObj.setMessageType("" + message.charAt(message.length()-1));
+            }
+
+        }
+
         // 创建Excel文件并且写入过滤后的记录列表。
         ExcelWriterBuilder excelWriterBuilder = EasyExcel.write(new File("C:\\ankiOutput\\result.xlsx"),
-                OutputObj.class);
-        excelWriterBuilder.sheet(1).doWrite(outputList);
+                ExcelObj.class);
+        excelWriterBuilder.sheet(1).doWrite(filteredList);
+    }
+
+    public String matchString(String str, String regex) {
+        if(str !=null && !str.isEmpty()){
+            Pattern p = Pattern.compile(regex);
+            Matcher matcher = p.matcher(str);
+            if (matcher.find()) {
+                return matcher.group();
+            }
+        }
+        return "";
     }
 
     public String findMessage(File sourceFile, String messageId) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(sourceFile));
-        ;
         List<String> message = br.lines().filter(line -> line.contains(messageId)).collect(Collectors.toList());
         br.close();
-
         System.out.println("结果集大小：" + message.size());
-        if(message.size()>0){
+        if (message.size() > 0) {
             return message.get(0);
-        }else{
+        } else {
             return "";
         }
     }
@@ -147,8 +192,13 @@ public class ExcelObjListener extends AnalysisEventListener<ExcelObj> {
                 else {
                     if (file.getName().equals(searchFileObj.fileName)) {
                         final BufferedReader br = new BufferedReader(new FileReader(file));
-                        final String line = br.lines().collect(Collectors.toList()).get(searchFileObj.fileNo - 1);
-                        searchFileObj.setResultLine(line);
+                        try{
+                            final String line = br.lines().collect(Collectors.toList()).get(searchFileObj.fileNo - 1);
+                            searchFileObj.setResultLine(line);
+                        }catch(Exception e){
+                            System.out.println("出错对象："+searchFileObj);
+                        }
+                        
                         try {
                             br.close();
                         } catch (final IOException e) {

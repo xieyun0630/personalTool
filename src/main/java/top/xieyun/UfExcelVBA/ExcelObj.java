@@ -9,6 +9,7 @@ import lombok.Data;
  */
 @Data
 public class ExcelObj {
+    
     @ExcelProperty
     private String cell1 = "";
 
@@ -40,5 +41,17 @@ public class ExcelObj {
     private String cell10 = "";
 
     @ExcelProperty
-    private String cell11 = "";
+    private String sheetName = "";
+
+    @ExcelProperty
+    private String sheetType = "";
+
+    @ExcelProperty
+    private String messageId = "";
+
+    @ExcelProperty
+    private String message = "";
+
+    @ExcelProperty
+    private String messageType = "";
 }
