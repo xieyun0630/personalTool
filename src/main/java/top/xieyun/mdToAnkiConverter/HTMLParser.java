@@ -27,8 +27,8 @@ public class HTMLParser {
 		new HTMLParser().parseHTMLMarkdownToExcelFile("C:\\ankiOutput\\javascript_info.html", "C:\\ankiOutput\\javascript_info.xlsx");
 	}
 	
-    public void parseHTMLMarkdownToExcelFile(final String htmlFilePath) {
-        //获取目标文件名
+    //获取目标文件名
+        public void parseHTMLMarkdownToExcelFile(final String htmlFilePath) {
         final String targetDirePath = htmlFilePath.substring(0, htmlFilePath.length() - 5) + ".csv";
         parseHTMLMarkdownToExcelFile(htmlFilePath, targetDirePath);
     }
