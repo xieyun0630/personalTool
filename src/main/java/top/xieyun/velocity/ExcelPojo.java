@@ -2,7 +2,6 @@ package top.xieyun.velocity;
 
 import com.alibaba.excel.annotation.ExcelProperty;
 
-import lombok.Data;
 public class ExcelPojo {
 	@ExcelProperty(value = "WS_FORM", index = 0)
 	private String WS_FORM;
@@ -184,7 +183,6 @@ public class ExcelPojo {
 	}
 	public ExcelPojo() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	@Override
 	public String toString() {

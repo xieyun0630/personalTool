@@ -6,7 +6,7 @@ import com.alibaba.excel.annotation.ExcelProperty;
  * anki的卡片对象，每一个对象对应一个anki卡片
  */
 
-public class MarkDownHtmlData {
+public class MarkDownHtmlData implements Comparable<MarkDownHtmlData>{
 	// 用于标识卡片的ID属性
 	@ExcelProperty
 	private String sortedFiled = "";
@@ -25,7 +25,7 @@ public class MarkDownHtmlData {
 		super();
 	}
 
-	public MarkDownHtmlData(String sortedFiled, String problem, String answer) {
+	public MarkDownHtmlData(final String sortedFiled, final String problem, final String answer) {
 		super();
 		this.sortedFiled = sortedFiled;
 		this.problem = problem;
@@ -36,7 +36,7 @@ public class MarkDownHtmlData {
 		return sortedFiled;
 	}
 
-	public void setSortedFiled(String sortedFiled) {
+	public void setSortedFiled(final String sortedFiled) {
 		this.sortedFiled = sortedFiled;
 	}
 
@@ -44,7 +44,7 @@ public class MarkDownHtmlData {
 		return problem;
 	}
 
-	public void setProblem(String problem) {
+	public void setProblem(final String problem) {
 		this.problem = problem;
 	}
 
@@ -52,16 +52,15 @@ public class MarkDownHtmlData {
 		return answer;
 	}
 
-	public void setAnswer(String answer) {
+	public void setAnswer(final String answer) {
 		this.answer = answer;
 	}
-	
 
 	public String getLabel() {
 		return label;
 	}
 
-	public void setLabel(String label) {
+	public void setLabel(final String label) {
 		this.label = label;
 	}
 
@@ -69,5 +68,16 @@ public class MarkDownHtmlData {
 	public String toString() {
 		return "MarkDownHtmlData [sortedFiled=" + sortedFiled + ", problem=" + problem + ", answer=" + answer + "]";
 	}
+
+	@Override
+	public boolean equals(Object markDownHtmlData){
+		MarkDownHtmlData mdh = (MarkDownHtmlData) markDownHtmlData;
+		return mdh.getSortedFiled().equals(this.getSortedFiled());
+	}
+
+	@Override
+    public int compareTo(MarkDownHtmlData markDownHtmlData) {
+		return markDownHtmlData.getSortedFiled().compareTo(this.getSortedFiled());
+    }
 
 }

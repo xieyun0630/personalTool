@@ -35,6 +35,7 @@ public class ConverterTest {
 	@Test
 	public void parser() {
 		parser.parseHTMLMarkdownToExcelFile("C:\\ankiOutput\\maven.html");
+		parser.parseHTMLMarkdownToExcelFile("C:\\ankiOutput\\java_se.html");
 	}
 
 	@Test
