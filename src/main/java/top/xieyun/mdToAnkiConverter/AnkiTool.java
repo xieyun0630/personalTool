@@ -27,7 +27,7 @@ public class AnkiTool {
                     // 递归
                     moveImagesToTargetPath(file,targetPath);
                 else {
-                    if (file.getName().endsWith(".png")) {
+                    if (file.getName().endsWith(".png") || file.getName().endsWith(".gif") ) {
                         File targetFile= new File(targetPath.getAbsolutePath()+"\\"+file.getName());
                         FileUtils.copyFile(file, targetFile);
                     }

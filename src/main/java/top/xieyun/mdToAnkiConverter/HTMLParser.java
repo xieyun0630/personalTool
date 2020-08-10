@@ -23,27 +23,50 @@ import top.xieyun.selenium.MarkDownHtmlData;
  *
  */
 public class HTMLParser {
-	public static void main(final String[] args) {
-		new HTMLParser().parseHTMLMarkdownToExcelFile("C:\\ankiOutput\\javascript_info.html", "C:\\ankiOutput\\javascript_info.xlsx");
-	}
-	
-    //获取目标文件名
-        public void parseHTMLMarkdownToExcelFile(final String htmlFilePath) {
+    public static void main(final String[] args) {
+        new HTMLParser().parseHTMLMarkdownToExcelFile("C:\\ankiOutput\\javascript_info.html",
+                "C:\\ankiOutput\\javascript_info.xlsx");
+    }
+
+    public void parseHTMLMarkdownFromDirection(final File direction) {
+        if (!direction.exists())
+            throw new IllegalArgumentException("目录：" + direction + "不存在.");
+        if (!direction.isDirectory()) {
+            throw new IllegalArgumentException(direction + "不是目录。");
+        }
+
+        // 如果要遍历子目录下的内容就需要构造File对象做递归操作，File提供了直接返回File对象的API
+        File[] files = direction.listFiles();
+        if (files != null && files.length > 0) {
+            for (File file : files) {
+                if (file.isDirectory())
+                    // 递归
+                    parseHTMLMarkdownFromDirection(file);
+                else {
+                    if (file.getName().endsWith(".html")) {
+                        parseHTMLMarkdownToExcelFile(file.getAbsolutePath(),"C:\\ankiOutput\\"+"markdwonNote.csv");
+                    }
+                }
+            }
+        }
+    }
+
+    public void parseHTMLMarkdownToExcelFile(final String htmlFilePath) {
         final String targetDirePath = htmlFilePath.substring(0, htmlFilePath.length() - 5) + ".csv";
         parseHTMLMarkdownToExcelFile(htmlFilePath, targetDirePath);
     }
 
     public void parseHTMLMarkdownToExcelFile(final String htmlFilePath, final String targetFilePath) {
-        //excel记录列表
+        // excel记录列表
         List<MarkDownHtmlData> records = new ArrayList<>();
 
-        //标题数组
-        final List<String> HEADERS = Arrays.asList(new String[]{"h1", "h2", "h3", "h4", "h5", "h6"});
-        //HTML文件
+        // 标题数组
+        final List<String> HEADERS = Arrays.asList(new String[] { "h1", "h2", "h3", "h4", "h5", "h6" });
+        // HTML文件
         final File markedMD = new File(htmlFilePath);
-        //excel文件存放位置
+        // excel文件存放位置
         final File targetExcel = new File(targetFilePath);
-        if(targetExcel.exists()){
+        if (targetExcel.exists()) {
             targetExcel.delete();
         }
 
@@ -51,25 +74,24 @@ public class HTMLParser {
         Document htmlDoc = null;
         try {
             htmlDoc = Jsoup.parse(markedMD, "utf-8");
-            //设置源代码格式为无格式字符
+            // 设置源代码格式为无格式字符
             htmlDoc.outputSettings().indentAmount(0).prettyPrint(false);
         } catch (final IOException e) {
             e.printStackTrace();
         }
 
-        //查找所有标题的父元素
+        // 查找所有标题的父元素
         final Element write = htmlDoc.getElementById("write");
-        //获得所有标题与内容
+        // 获得所有标题与内容
         final Elements elements = write.children();
 
-
-        //循环单个excel记录的读取
+        // 循环单个excel记录的读取
         MarkDownHtmlData record = null;
         for (final Element element : elements) {
             if (HEADERS.contains(element.tagName())) {
                 // 如果当前遍历的元素是标题元素的情况
                 if (record != null) {
-                    //判断上一个excel记录是否为空,不为空则添加到列表。
+                    // 判断上一个excel记录是否为空,不为空则添加到列表。
                     records.add(record);
                 }
 
@@ -105,22 +127,19 @@ public class HTMLParser {
 
         System.out.println("过滤前卡片组的大小：" + records.size());
 
-        //过滤掉没有内容的的记录。
-        records = records.stream()
-                .filter(markDownHtmlData -> {
-                    //过滤掉没有内容的的记录。
-                    return markDownHtmlData.getAnswer() != null && !markDownHtmlData.getAnswer().isEmpty();
-                })
-                .distinct()
-                .collect(Collectors.toList());
+        // 过滤掉没有内容的的记录。
+        records = records.stream().filter(markDownHtmlData -> {
+            // 过滤掉没有内容的的记录。
+            return markDownHtmlData.getAnswer() != null && !markDownHtmlData.getAnswer().isEmpty();
+        }).distinct().collect(Collectors.toList());
 
         System.out.println("过滤后卡片组的大小：" + records.size());
 
-        //获取文件名
+        // 获取文件名
         final String HTMLFileName = new File(htmlFilePath).getName();
-        final String fileName = HTMLFileName.substring(0, HTMLFileName.length()-5);
-        
-        //将问题加到anki格式的背面
+        final String fileName = HTMLFileName.substring(0, HTMLFileName.length() - 5);
+
+        // 将问题加到anki格式的背面
         records.replaceAll(o -> {
             o.setAnswer(o.getProblem() + o.getAnswer());
             o.setLabel(fileName);
@@ -128,11 +147,12 @@ public class HTMLParser {
         });
 
         // 创建Excel文件并且写入过滤后的记录列表。
-        // ExcelWriterBuilder excelWriterBuilder = EasyExcel.write(targetExcel, MarkDownHtmlData.class);
+        // ExcelWriterBuilder excelWriterBuilder = EasyExcel.write(targetExcel,
+        // MarkDownHtmlData.class);
         // excelWriterBuilder.sheet(1).doWrite(records);
-        final CsvWriter writer = CsvUtil.getWriter(targetExcel, Charset.forName("utf-8"));
-        for(final MarkDownHtmlData o : records){
-            writer.write(new String[]{o.getSortedFiled(),o.getProblem(),o.getAnswer(),o.getLabel()});
+        final CsvWriter writer = CsvUtil.getWriter(targetExcel, Charset.forName("utf-8"), true);
+        for (final MarkDownHtmlData o : records) {
+            writer.write(new String[] { o.getSortedFiled(), o.getProblem(), o.getAnswer(), o.getLabel() });
         }
 
     }

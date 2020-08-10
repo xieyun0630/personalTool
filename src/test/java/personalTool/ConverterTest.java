@@ -18,11 +18,10 @@ public class ConverterTest {
 
 	@Test
 	public void marker() {
-		final File file = new File("C:\\note\\CSNote");
+		final File file = new File("C:\\Users\\Yun\\Desktop\\note\\CSNote");
 		try {
 			marker.patchMarkedID(file);
 		} catch (final FileNotFoundException e) {
-
 			e.printStackTrace();
 		}
 	}
@@ -31,17 +30,23 @@ public class ConverterTest {
 	public void merger() {
 
 	}
+	
+	@Test
+	public void parserFromDir() {
+		parser.parseHTMLMarkdownFromDirection(new File("C:\\ankiOutput"));
+	}
 
 	@Test
 	public void parser() {
-		parser.parseHTMLMarkdownToExcelFile("C:\\ankiOutput\\maven.html");
-		parser.parseHTMLMarkdownToExcelFile("C:\\ankiOutput\\java_se.html");
+		parser.parseHTMLMarkdownToExcelFile("C:\\ankiOutput\\vue.html");
+		parser.parseHTMLMarkdownToExcelFile("C:\\ankiOutput\\mybatis.html");
+		parser.parseHTMLMarkdownToExcelFile("C:\\ankiOutput\\css.html");
 	}
 
 	@Test 
 	public void testAnkiTool() {
-		File sourcePath = new File("C:\\note\\CSNote");
-		File targetPath = new File("C:\\Users\\xieyun\\AppData\\Roaming\\Anki2\\用户1\\collection.media");
+		File sourcePath = new File("C:\\Users\\Yun\\Desktop\\note\\CSNote");
+		File targetPath = new File("C:\\Users\\Yun\\AppData\\Roaming\\Anki2\\Yun\\collection.media");
 		try {
 			AnkiTool.moveImagesToTargetPath(sourcePath, targetPath);
 		} catch (IOException e) {
