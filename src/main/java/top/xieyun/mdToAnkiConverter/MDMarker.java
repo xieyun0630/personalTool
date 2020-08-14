@@ -66,11 +66,18 @@ public class MDMarker {
 				if (!isCodeFlag && getTitleGrade(line) > 0 && getTitleGrade(line) < 7) {
 
 					// 判断当前行是否已经有ID标识
-					int lastLabelIndex = line.lastIndexOf("[\t]");
 					String substring = "";
-					if (lastLabelIndex > 0) {
-						substring = line.substring(lastLabelIndex);
+
+					int lastLabelIndexWithTab = line.lastIndexOf("[\t]");
+					if (lastLabelIndexWithTab > 0) {
+						substring = line.substring(lastLabelIndexWithTab);
 					}
+
+					int lastLabelIndexWithWhiteSpace = line.lastIndexOf("[ ]");
+					if (lastLabelIndexWithWhiteSpace > 0) {
+						substring = line.substring(lastLabelIndexWithWhiteSpace);
+					}
+
 					if (substring.isEmpty()) {
 						isNewNote = true;
 						// 没有ID标识情况
